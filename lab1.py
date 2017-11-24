@@ -52,6 +52,6 @@ for row in rows:
 	u[2]="".join([identStart,identEnd])
         updCur.updateRow(u)
 
-    licznik+=1
+    licznik += 1
 
 arcpy.DeleteIdentical_management(outfc+"/vertex.shp", "ident")

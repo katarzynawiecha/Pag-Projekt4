@@ -18,8 +18,9 @@ arcpy.CreateFeatureclass_management(outfc, "vertex.shp", "POINT", "", "DISABLED"
 arcpy.AddField_management(outfc+"/vertex.shp", "ident", "TEXT")
 arcpy.AddField_management(outfc+"/vertex.shp", "X", "DOUBLE")
 arcpy.AddField_management(outfc+"/vertex.shp", "Y", "DOUBLE")
+arcpy.AddField_management(outfc+"/vertex.shp", "identJ", "TEXT")
 
-cursor = arcpy.da.InsertCursor(outfc+"/vertex.shp", ("FID", "SHAPE@XY","ident","X","Y"))
+cursor = arcpy.da.InsertCursor(outfc+"/vertex.shp", ("FID", "SHAPE@XY","ident","X","Y","identJ"))
 
 licznik=0
 for row in rows:
@@ -32,7 +33,6 @@ for row in rows:
     starty = startpt.Y
 
     identStart=("".join([str(startx)[-4:],str(starty)[-4:]]))
-    cursor.insertRow(("1",(startx, starty),identStart,startx,starty))
 
     #Pobranie ostatniego punktu danego obiektu
     endpt = feat.lastPoint
@@ -41,17 +41,21 @@ for row in rows:
     endy = endpt.Y
 
     identEnd=("".join([str(endx)[-4:],str(endy)[-4:]]))
-    cursor.insertRow(("1",(endx, endy),identEnd,endx,endy))
 
+    identJezdni="".join([identStart,identEnd])
+
+    cursor.insertRow(("1",(startx, starty),identStart,startx,starty,identJezdni))
+    cursor.insertRow(("1",(endx, endy),identEnd,endx,endy,identJezdni))
+    
     #Zaktualizowanie pól id_from, id_to utworzonymi identyfikatorami punktów
     expression = arcpy.AddFieldDelimiters(infc, "FID") + ' = ' + str(licznik)
     with arcpy.da.UpdateCursor(infc,["id_from","id_to","id_jezdni"],expression) as updCur:
       for u in updCur:
         u[0]=identStart
         u[1]=identEnd
-	u[2]="".join([identStart,identEnd])
+	u[2]=identJezdni
         updCur.updateRow(u)
 
-    licznik += 1
+    licznik+=1
 
 arcpy.DeleteIdentical_management(outfc+"/vertex.shp", "ident")

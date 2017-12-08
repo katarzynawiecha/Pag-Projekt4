@@ -1,7 +1,7 @@
 import arcpy
 import csv
 
-#Ustawienie œrodowisk folderów zapisu/odczytu
+#Ustawienie Å“rodowisk folderÃ³w zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"
 arcpy.env.workspace = "C:/Users/Pietruszka/Desktop/PAg/2/wyniki"
 
@@ -16,7 +16,7 @@ fieldmap.mergeRule = "join"
 fieldmappings.replaceFieldMap(FieldIndex, fieldmap)
 arcpy.SpatialJoin_analysis("vertex.shp", "vertex1.shp", "spatialJoin.shp", "JOIN_ONE_TO_ONE","#",fieldmappings)
 
-#s³ownik wierzcho³ków
+#sÂ³ownik wierzchoÂ³kÃ³w
 dictW={}
 
 rows =  arcpy.SearchCursor("spatialJoin.shp")
@@ -31,12 +31,12 @@ for row in rows:
     x = x[16:]
   dictW[str(row.getValue("ident"))]=tab
 
-#wypisanie s³ownika - dla sprawdzenia
+#wypisanie sÂ³ownika - dla sprawdzenia
 w = csv.writer(open("output.csv", "w"))
 for key, val in dictW.items():
  w.writerow([key, val])
 
-#s³ownik krawêdzi
+#sÂ³ownik krawÃªdzi
 dictE={}
 
 rows =  arcpy.SearchCursor(infc)
@@ -44,7 +44,30 @@ rows =  arcpy.SearchCursor(infc)
 for row in rows:
   dictE[str(row.getValue("id_jezdni"))]=[str(row.getValue("id_from")),str(row.getValue("id_to"))]
 
-#wypisanie s³ownika - dla sprawdzenia
+#wypisanie sÂ³ownika - dla sprawdzenia
 w = csv.writer(open("output1.csv", "w"))
 for key, val in dictE.items():
  w.writerow([key, val])
+
+
+# ALGORTYM PRZESZUKIWANIA WSZERZ
+kolejka = []
+tablica = []
+
+# slownik odwiedzonych wierzcholkow
+dictVisited = {}
+for key, val in dictW.items():
+    dictVisited[key] = False
+
+start_point = arcpy.GetParameterAsText(0)    
+kolejka.append(start_point)
+dictVisited[start_point] = True
+while kolejka == False:
+    element = kolejka.pop()
+    tablica.append(element)
+
+    # dla kazdego sasiada elementu:
+    #    if dictVisited(sasiad) == true:
+    #        break
+    #    kolejka.append(sasiad)
+    # dictVisited[sasiad] = True

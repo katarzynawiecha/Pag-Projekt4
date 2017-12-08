@@ -1,6 +1,18 @@
 import arcpy
 import csv
 
+class Vertex:
+  x
+  y
+  edge_out
+  
+class Edge:
+  vertex_from
+  vertex_to
+  id_jezdni
+  
+  
+
 #Ustawienie œrodowisk folderów zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"
 arcpy.env.workspace = "C:/Users/Pietruszka/Desktop/PAg/2/wyniki"

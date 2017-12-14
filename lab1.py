@@ -60,4 +60,5 @@ for row in rows:
 
 arcpy.DeleteIdentical_management(outfc+"/vertex.shp", "ident")
 
+# dodanie atrybutu LENGTH do dróg [km]
 arcpy.AddGeometryAttributes_management(infc, "LENGTH", "KILOMETERS", "", "")

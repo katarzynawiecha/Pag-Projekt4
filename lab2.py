@@ -16,6 +16,9 @@ class Edge:
         self.time = t
         self.direction = direction  
 
+    def weight(self):
+        return self.length
+
 #Ustawienie sciezek zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"
 arcpy.env.workspace = "C:/Users/Pietruszka/Desktop/PAg/2/wyniki"

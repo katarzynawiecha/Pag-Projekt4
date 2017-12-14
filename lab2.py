@@ -2,16 +2,20 @@ import arcpy
 import csv
 
 class Vertex:
-  x
-  y
-  edge_out
-  
+    def __init__(self, ident, wsp_x, wsp_y, tab_kr):
+        self.id = ident
+        self.x = wsp_x
+        self.y = wsp_y
+        self.edge_out = tab_kr
+
 class Edge:
-  vertex_from
-  vertex_to
-  id_jezdni
-  
-  
+    def __init__(self, v_from, v_to, ident, l, t, dir):
+        self.vertex_from = v_from
+        self.vertex_to = v_to
+        self.id_jezdni = ident
+        self.length = l
+        self.time = t
+        self.direction = dir   
 
 #Ustawienie œrodowisk folderów zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"
@@ -60,26 +64,3 @@ for row in rows:
 w = csv.writer(open("output1.csv", "w"))
 for key, val in dictE.items():
  w.writerow([key, val])
-
-
-# ALGORTYM PRZESZUKIWANIA WSZERZ
-kolejka = []
-tablica = []
-
-# slownik odwiedzonych wierzcholkow
-dictVisited = {}
-for key, val in dictW.items():
-    dictVisited[key] = False
-
-start_point = arcpy.GetParameterAsText(0)    
-kolejka.append(start_point)
-dictVisited[start_point] = True
-while kolejka == False:
-    element = kolejka.pop()
-    tablica.append(element)
-
-    # dla kazdego sasiada elementu:
-    #    if dictVisited(sasiad) == true:
-    #        break
-    #    kolejka.append(sasiad)
-    # dictVisited[sasiad] = True

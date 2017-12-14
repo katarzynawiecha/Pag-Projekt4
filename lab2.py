@@ -57,16 +57,3 @@ for row in rows:
     # uzupełnienie listy krawędzi
     v_from.edge_out.append(edg)
     v_to.edge_out.append(edg)
-
-# uzupelnienie atrybutu edge_out o wychodzace krawedzie
-rows = arcpy.SearchCursor("spatialJoin.shp")
-for row in rows:
-    x = str(row.getValue("identJ"))
-    x = x[16:]
-
-    tab = []
-    while len(x) > 0:
-        v = x[:16]
-        tab.append(v)
-        x = x[16:]
-    dictW[str(row.getValue("ident"))].edge_out = tab

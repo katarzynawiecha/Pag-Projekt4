@@ -1,6 +1,6 @@
 import arcpy
 
-#Ustawienie œrodowisk folderów zapisu/odczytu
+#Ustawienie Å“rodowisk folderÃ³w zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"
 outfc = "C:/Users/Pietruszka/Desktop/PAg/2/wyniki"
 
@@ -13,7 +13,7 @@ arcpy.AddField_management(infc, "id_from", "TEXT")
 arcpy.AddField_management(infc, "id_to", "TEXT")
 arcpy.AddField_management(infc, "id_jezdni", "TEXT")
 
-#Stworzenie nowej klasy punktowej na wêz³y
+#Stworzenie nowej klasy punktowej na wÃªzÂ³y
 arcpy.CreateFeatureclass_management(outfc, "vertex.shp", "POINT", "", "DISABLED", "DISABLED",arcpy.Describe(infc).spatialReference)
 arcpy.AddField_management(outfc+"/vertex.shp", "ident", "TEXT")
 arcpy.AddField_management(outfc+"/vertex.shp", "X", "DOUBLE")
@@ -47,7 +47,7 @@ for row in rows:
     cursor.insertRow(("1",(startx, starty),identStart,startx,starty,identJezdni))
     cursor.insertRow(("1",(endx, endy),identEnd,endx,endy,identJezdni))
     
-    #Zaktualizowanie pól id_from, id_to utworzonymi identyfikatorami punktów
+    #Zaktualizowanie pÃ³l id_from, id_to utworzonymi identyfikatorami punktÃ³w
     expression = arcpy.AddFieldDelimiters(infc, "FID") + ' = ' + str(licznik)
     with arcpy.da.UpdateCursor(infc,["id_from","id_to","id_jezdni"],expression) as updCur:
       for u in updCur:
@@ -59,3 +59,5 @@ for row in rows:
     licznik+=1
 
 arcpy.DeleteIdentical_management(outfc+"/vertex.shp", "ident")
+
+arcpy.AddGeometryAttributes_management(infc, "LENGTH", "KILOMETERS", "", "")

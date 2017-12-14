@@ -9,13 +9,13 @@ class Vertex:
         self.edge_out = tab_kr
 
 class Edge:
-    def __init__(self, v_from, v_to, ident, l, t, dir):
+    def __init__(self, v_from, v_to, ident, l, t, direction):
         self.vertex_from = v_from
         self.vertex_to = v_to
         self.id_jezdni = ident
         self.length = l
         self.time = t
-        self.direction = dir   
+        self.direction = direction  
 
 #Ustawienie œrodowisk folderów zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"

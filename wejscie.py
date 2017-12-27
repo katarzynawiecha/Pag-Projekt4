@@ -36,14 +36,13 @@ arcpy.Delete_management("tmp.shp")
 arcpy.Delete_management("spatJ.shp")
 
 #odczyt zaznaczonych krawêdzi z korkami
-#mój pomys³ to najprostsze reprezentowanie korków przez selekcjê (zaznaczenie) danych obiektów liniowych
+#mój pomys³ to najprostsze reprezentowanie korków przez selekcjê (zaznaczenie) danych obiektów liniowych na pliku .lyr!
 arcpy.CreateFeatureclass_management("C:/Users/Pietruszka/Desktop/PAg/2/wyniki", "korki.shp", "POLYLINE")
 arcpy.CopyFeatures_management("dane.lyr", "korki.shp")#zamiana danych na Layer
 cursor2 = arcpy.SearchCursor("korki.shp")
 korki=[]
 for row in cursor2:
  korki.append(row.getValue("id_jezdni"))
-
 for x in korki:
     arcpy.AddMessage(x)
 

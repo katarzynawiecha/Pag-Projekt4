@@ -1,23 +1,8 @@
 import arcpy
+from klasy import Vertex, Edge
+from agwiazdka import a_star
 
-class Vertex:
-    def __init__(self, ident, wsp_x, wsp_y):
-        self.id = ident
-        self.x = wsp_x
-        self.y = wsp_y
-        self.edge_out = []
 
-class Edge:
-    def __init__(self, v_from, v_to, ident, l, t, direction):
-        self.vertex_from = v_from
-        self.vertex_to = v_to
-        self.id_jezdni = ident
-        self.length = l
-        self.time = t
-        self.direction = direction  
-
-    def weight(self):
-        return self.length
 
 #Ustawienie sciezek zapisu/odczytu
 infc = "C:/Users/Pietruszka/Desktop/PAg/2/dane.shp"
@@ -52,8 +37,11 @@ for row in rows:
     # tworzenie obiektow Edge i umieszczenie ich w slowniku
     v_from = dictW[str(row.getValue("id_from"))]
     v_to = dictW[str(row.getValue("id_to"))]
-    edg = Edge(v_from, v_to, str(row.getValue("id_jezdni")), str(row.getValue("LENGTH")), 10, 0)
+    edg = Edge(v_from, v_to, str(row.getValue("id_jezdni")), int(row.getValue("max_V")), 0)
     dictE[str(row.getValue("id_jezdni"))] = edg
-    # uzupełnienie listy krawędzi
+    # uzupelnienie listy krawedzi
     v_from.edge_out.append(edg)
     v_to.edge_out.append(edg)
+
+start, goal = list(dictW.values())[0:2]
+print(a_star(start, goal))

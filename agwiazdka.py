@@ -1,8 +1,9 @@
 from heapq import heappush, heappop
-from lab2 import Vertex, Edge
+import klasy
+
 
 def calc_heuristic(vertex, goal):
-    return 0
+    return vertex.distance_to(goal)
 
 def get_neighbour(vertex, edge):
     v1 = edge.vertex_from
@@ -24,13 +25,13 @@ def a_star(start, goal):
     visited_vertexes = set()
     queued_vertexes = [] #zakolejkowane
     queued_set = set()
-    start.g_score = 0 #długość optymalnej trasy
+    start.g_score = 0 #dlugosc optymalnej trasy
     heappush(queued_vertexes, (0, start))
     queued_set.add(start)
 
     while True:
         try:
-            v = heappop(queued_vertexes)
+            _, v = heappop(queued_vertexes)
         except IndexError:
             break
         if v in visited_vertexes:
@@ -53,3 +54,5 @@ def a_star(start, goal):
                 w.came_from = v
                 w.g_score = g_score
                 heappush(queued_vertexes, (w.g_score + w.h_score, w))
+
+    return reconstruct_path(start, goal)

@@ -21,7 +21,7 @@ def reconstruct_path(start, goal):
         path.append(v)
     return path
 
-def a_star(start, goal):
+def a_star(start, goal, illegal_edges):
     visited_vertexes = set()
     queued_vertexes = [] #zakolejkowane
     queued_set = set()
@@ -40,6 +40,8 @@ def a_star(start, goal):
             break
         visited_vertexes.add(v)
         for edge in v.edge_out:
+            if edge.id_jezdni in illegal_edges:
+                continue
             w = get_neighbour(v, edge)
             if w in visited_vertexes:
                 continue

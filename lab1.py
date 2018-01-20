@@ -9,6 +9,8 @@ def wczytaj_dane(infc,outfc):
     arcpy.AddField_management(infc, "id_from", "TEXT")
     arcpy.AddField_management(infc, "id_to", "TEXT")
     arcpy.AddField_management(infc, "id_jezdni", "TEXT")
+    if not arcpy.ListFields(infc, "max_V"):  
+        arcpy.AddField_management(infc, "max_V", "SHORT")
 
     # Stworzenie nowej klasy punktowej na wezly
     arcpy.CreateFeatureclass_management(outfc[: outfc.rfind("\\")], outfc[outfc.rfind("\\") + 1:], "POINT", "",
@@ -59,7 +61,6 @@ def wczytaj_dane(infc,outfc):
     arcpy.DeleteIdentical_management(outfc, "ident")
 
     # dodanie nowej kolumny, ktora zawierac bedzie max predkosc zalezna od klasy drogi
-    arcpy.AddField_management(infc, "max_V", "SHORT")
 
     with arcpy.da.UpdateCursor(infc, ["klasaDrogi", "max_V"]) as updateCursor:
         for uRow in updateCursor:
@@ -79,5 +80,4 @@ def wczytaj_dane(infc,outfc):
                 uRow[1] = 30
             elif uRow[0] == 'I':
                 uRow[1] = 50
-            print(uRow)
             updateCursor.updateRow(uRow)

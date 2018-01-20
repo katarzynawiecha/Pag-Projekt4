@@ -1,23 +1,23 @@
 import arcpy
 from arcpy import env
 
-#edgeLayer to warstwa z krawedziami z atrybutem 'id_jezdni'
+#edgeShp to warstwa z krawedziami z atrybutem 'id_jezdni'
 #nalezy ja miec w podgadzie ArcMapy aby dzialal SelectLayerByAttribute
-edgeLayer=arcpy.GetParameterAsText(0)
+# edgeShp=arcpy.GetParameterAsText(0)
 
-#przykladowe dane w tablicy wierzcholkow
-tablica=["0.070.67","5.723.77","1.488.17","5.790.92","0.0628.5","3.675.82","1.723.21","1.0751.8","3.864.36"]
-tablicaEdge=["5.723.770.070.67","1.488.175.723.77","1.488.175.790.92","0.0628.55.790.92","0.0628.53.675.82","1.723.213.675.82","1.0751.81.723.21","3.864.361.0751.8"]
+# #przykladowe dane w tablicy wierzcholkow
+# tablica=["0.070.67","5.723.77","1.488.17","5.790.92","0.0628.5","3.675.82","1.723.21","1.0751.8","3.864.36"]
+# tablicaEdge=["5.723.770.070.67","1.488.175.723.77","1.488.175.790.92","0.0628.55.790.92","0.0628.53.675.82","1.723.213.675.82","1.0751.81.723.21","3.864.361.0751.8"]
 
-#tablica z 'korkami'- pozniej do usuniecia ten fragment
-korki=[]#musze ja sobie stworzyc poniewaz tablica korki jest aktualnie w innym pliku - po polaczeniu plikow ten fragment nie bedzie potrzebny
-cursor1 = arcpy.SearchCursor("C:/Users/Pietruszka/Desktop/PAg/2/wyniki/korki.shp")
-for row in cursor1:
- korki.append(row.getValue("id_jezdni"))
+# #tablica z 'korkami'- pozniej do usuniecia ten fragment
+# korki=[]#musze ja sobie stworzyc poniewaz tablica korki jest aktualnie w innym pliku - po polaczeniu plikow ten fragment nie bedzie potrzebny
+# cursor1 = arcpy.SearchCursor("C:/Users/Pietruszka/Desktop/PAg/2/wyniki/korki.shp")
+# for row in cursor1:
+#  korki.append(row.getValue("id_jezdni"))
 
-#stworzenie warstwy drogowej bez korkow        
-arcpy.env.workspace = 'C:/Users/Pietruszka/Desktop/PAg/2/wyniki'
-arcpy.Erase_analysis("dane.shp","korki.shp","daneBezKorkow.shp")
+# #stworzenie warstwy drogowej bez korkow        
+# arcpy.env.workspace = 'C:/Users/Pietruszka/Desktop/PAg/2/wyniki'
+# arcpy.Erase_analysis("dane.shp","korki.shp","daneBezKorkow.shp")
 
 # #przejrzenie tablicy jezdni i sprawdzenie czy ktoras ma "korek" - jesli tak to nadpisuje ja zerem
 # for idx, item in enumerate(tablicaEdge):
@@ -68,29 +68,38 @@ arcpy.Erase_analysis("dane.shp","korki.shp","daneBezKorkow.shp")
 #WIZUALIZACJA
 #"tablica" to tablica z wierzcholkami trasy
 #stworzenie nowej warstwy do zapisywania samej sciezki
-out_path = arcpy.Describe(edgeLayer).path
-out_name = "wizualBezKorkow.shp"
-geometry_type = "POLYLINE"
-template = edgeLayer
-has_m = "DISABLED"
-has_z = "DISABLED"
-spatial_reference = arcpy.Describe(edgeLayer).spatialReference
+def wizualizacja(vertexy, edgeShp, katalog):  
+  out_path = arcpy.Describe(katalog).path
+  out_name = "bezKorkow.shp"
+  geometry_type = "POLYLINE"
+  template = edgeShp
+  has_m = "DISABLED"
+  has_z = "DISABLED"
+  spatial_reference = arcpy.Describe(edgeShp).spatialReference
 
-arcpy.CreateFeatureclass_management(out_path, out_name, geometry_type,template, has_m, has_z, spatial_reference)
-visualLayer=out_path+'/'+out_name
+  arcpy.CreateFeatureclass_management(out_path, out_name, geometry_type,template, has_m, has_z, spatial_reference)
+  visualLayer=out_path+'/'+out_name
 
-#iteracja po tablicy i selekcja interesujacych nas obiektow
-for v, w in zip(tablica[:-1], tablica[1:]):
-  tmp = v.id + w.id
-  arcpy.SelectLayerByAttribute_management (edgeLayer, "ADD_TO_SELECTION",   "\"id_jezdni\" = '{}'".format(tmp))
-  tmp = w.id + v.id
-  arcpy.SelectLayerByAttribute_management (edgeLayer, "ADD_TO_SELECTION",   "\"id_jezdni\" = '{}'".format(tmp))
+  print("Wizualizacja")
+  print(edgeShp)
+  print(visualLayer)
 
-#przeniesienie zaznaczonych obiektow do nowej klasy
-arcpy.CopyFeatures_management(edgeLayer,visualLayer)
+  #iteracja po tablicy i selekcja interesujacych nas obiektow
+  # edgeLayer = out_path+'/edgeLayer.lyr'
+  edgeLayer = 'test_lyr'
+  arcpy.MakeFeatureLayer_management(edgeShp, edgeLayer)
+  mxd = arcpy.mapping.MapDocument("CURRENT")
+  lyr = arcpy.mapping.Layer(edgeLayer)
+  for v, w in zip(vertexy[:-1], vertexy[1:]):
+    tmp = v.id + w.id
+    arcpy.SelectLayerByAttribute_management (lyr, "ADD_TO_SELECTION",   "id_jezdni={}".format(tmp))
+    tmp = w.id + v.id
+    arcpy.SelectLayerByAttribute_management (lyr, "ADD_TO_SELECTION",   "id_jezdni={}".format(tmp))
 
-#dodanie warstwy z trasa do widoku
-mxd = arcpy.mapping.MapDocument("CURRENT")
-df = arcpy.mapping.ListDataFrames(mxd)[0]
-layer = arcpy.mapping.Layer(visualLayer)
-arcpy.mapping.AddLayer(df, layer, "AUTO_ARRANGE")
+  #przeniesienie zaznaczonych obiektow do nowej klasy
+  arcpy.CopyFeatures_management(lyr,visualLayer)
+
+  #dodanie warstwy z trasa do widoku
+  df = arcpy.mapping.ListDataFrames(mxd)[0]
+  layer = arcpy.mapping.Layer(visualLayer)
+  arcpy.mapping.AddLayer(df, layer, "AUTO_ARRANGE")

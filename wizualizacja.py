@@ -86,18 +86,17 @@ def wizualizacja(vertexy, edgeShp, katalog):
 
   #iteracja po tablicy i selekcja interesujacych nas obiektow
   # edgeLayer = out_path+'/edgeLayer.lyr'
-  edgeLayer = 'test_lyr'
+  edgeLayer = 'lyr'
   arcpy.MakeFeatureLayer_management(edgeShp, edgeLayer)
-  mxd = arcpy.mapping.MapDocument("CURRENT")
-  lyr = arcpy.mapping.Layer(edgeLayer)
+
   for v, w in zip(vertexy[:-1], vertexy[1:]):
     tmp = v.id + w.id
-    arcpy.SelectLayerByAttribute_management (lyr, "ADD_TO_SELECTION",   "id_jezdni={}".format(tmp))
+    arcpy.SelectLayerByAttribute_management (edgeLayer, "ADD_TO_SELECTION",   "id_jezdni='{}'".format(tmp))
     tmp = w.id + v.id
-    arcpy.SelectLayerByAttribute_management (lyr, "ADD_TO_SELECTION",   "id_jezdni={}".format(tmp))
+    arcpy.SelectLayerByAttribute_management (edgeLayer, "ADD_TO_SELECTION",   "id_jezdni='{}'".format(tmp))
 
   #przeniesienie zaznaczonych obiektow do nowej klasy
-  arcpy.CopyFeatures_management(lyr,visualLayer)
+  arcpy.CopyFeatures_management(edgeLayer,visualLayer)
 
   #dodanie warstwy z trasa do widoku
   df = arcpy.mapping.ListDataFrames(mxd)[0]

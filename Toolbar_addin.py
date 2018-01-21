@@ -101,3 +101,4 @@ class wyznacztrase(object):
         tab_vert = a_star(graf[0][startPoint], graf[0][endPoint], set())
         print("Sciezka:", [i.id for i in tab_vert])
         wizualizacja(tab_vert, plik_z_krawedziami, plik_z_werteksami)
+        button3.enabled = True

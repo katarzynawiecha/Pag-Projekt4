@@ -21,8 +21,7 @@ class Edge:
         self.vertex_to = v_to
         self.id_jezdni = ident
         self.length = v_from.distance_to(v_to)
-        self.time = self.length/V
-        self.direction = direction  
+        self.time = self.length/V  
 
     def weight(self):
         return self.time

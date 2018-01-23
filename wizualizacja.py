@@ -68,17 +68,16 @@ from arcpy import env
 #WIZUALIZACJA
 #"tablica" to tablica z wierzcholkami trasy
 #stworzenie nowej warstwy do zapisywania samej sciezki
-def wizualizacja(vertexy, edgeShp, katalog):  
+def wizualizacja(vertexy, edgeShp, katalog, nazwa):
+  mxd = arcpy.mapping.MapDocument('current')
   out_path = arcpy.Describe(katalog).path
-  out_name = "bezKorkow.shp"
   geometry_type = "POLYLINE"
   template = edgeShp
   has_m = "DISABLED"
   has_z = "DISABLED"
   spatial_reference = arcpy.Describe(edgeShp).spatialReference
 
-  arcpy.CreateFeatureclass_management(out_path, out_name, geometry_type,template, has_m, has_z, spatial_reference)
-  visualLayer=out_path+'/'+out_name
+  visualLayer = out_path + "\\" + nazwa
 
   print("Wizualizacja")
   print(edgeShp)
@@ -95,9 +94,10 @@ def wizualizacja(vertexy, edgeShp, katalog):
     tmp = w.id + v.id
     arcpy.SelectLayerByAttribute_management (edgeLayer, "ADD_TO_SELECTION",   "id_jezdni='{}'".format(tmp))
 
+
   #przeniesienie zaznaczonych obiektow do nowej klasy
   arcpy.CopyFeatures_management(edgeLayer,visualLayer)
-
+  arcpy.SelectLayerByAttribute_management(edgeLayer, "REMOVE_FROM_SELECTION")
   #dodanie warstwy z trasa do widoku
   df = arcpy.mapping.ListDataFrames(mxd)[0]
   layer = arcpy.mapping.Layer(visualLayer)

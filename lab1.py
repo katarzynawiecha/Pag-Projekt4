@@ -1,10 +1,10 @@
 import arcpy
 
+
 def wczytaj_dane(infc,outfc):
     desc = arcpy.Describe(infc)
-    shapefieldname = desc.ShapeFieldName
 
-    rows = arcpy.da.UpdateCursor(infc, [shapefieldname, "id_from", "id_to", "id_jezdni"])
+    rows = arcpy.da.UpdateCursor(infc, ["SHAPE@", "id_from", "id_to", "id_jezdni"])
 
     arcpy.AddField_management(infc, "id_from", "TEXT")
     arcpy.AddField_management(infc, "id_to", "TEXT")
@@ -26,7 +26,6 @@ def wczytaj_dane(infc,outfc):
         feat = row[0]
 
         # Pobranie pierwszego punktu danego obiektu
-        print(feat)
         startpt = feat.firstPoint
 
         startx = startpt.X

@@ -4,7 +4,7 @@ def wczytaj_dane(infc,outfc):
     desc = arcpy.Describe(infc)
     shapefieldname = desc.ShapeFieldName
 
-    rows = arcpy.SearchCursor(infc)
+    rows = arcpy.da.UpdateCursor(infc, [shapefieldname, "id_from", "id_to", "id_jezdni"])
 
     arcpy.AddField_management(infc, "id_from", "TEXT")
     arcpy.AddField_management(infc, "id_to", "TEXT")
@@ -22,9 +22,8 @@ def wczytaj_dane(infc,outfc):
 
     cursor = arcpy.da.InsertCursor(outfc, ("FID", "SHAPE@XY", "ident", "X", "Y", "identJ"))
 
-    licznik = 0
     for row in rows:
-        feat = row.getValue(shapefieldname)
+        feat = row[0]
 
         # Pobranie pierwszego punktu danego obiektu
         startpt = feat.firstPoint
@@ -48,15 +47,11 @@ def wczytaj_dane(infc,outfc):
         cursor.insertRow(("1", (endx, endy), identEnd, endx, endy, identJezdni))
 
         # Zaktualizowanie pol id_from, id_to utworzonymi identyfikatorami punktow
-        expression = arcpy.AddFieldDelimiters(infc, "FID") + ' = ' + str(licznik)
-        with arcpy.da.UpdateCursor(infc, ["id_from", "id_to", "id_jezdni"], expression) as updCur:
-            for u in updCur:
-                u[0] = identStart
-                u[1] = identEnd
-                u[2] = identJezdni
-                updCur.updateRow(u)
+        row[1] = identStart
+        row[2] = identEnd
+        row[3] = identJezdni
 
-        licznik += 1
+        rows.updateRow(row)
 
     arcpy.DeleteIdentical_management(outfc, "ident")
 

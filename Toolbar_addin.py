@@ -20,7 +20,7 @@ class ButtonClass1(object):
         global plik_z_krawedziami
         plik_z_krawedziami = pythonaddins.OpenDialog("Open",False,"")
         global plik_z_werteksami
-        plik_z_werteksami = pythonaddins.SaveDialog("Save", "dane.shp", "", lambda x: x and x.lower().endswith('.shp'),"Shapefile")
+        plik_z_werteksami = pythonaddins.SaveDialog("Save", "werteksy.shp", "", lambda x: x and x.lower().endswith('.shp'),"Shapefile")
         lab1.wczytaj_dane(plik_z_krawedziami, plik_z_werteksami)
         global graf
         graf = lab2.stworz_graf(plik_z_werteksami, plik_z_krawedziami)
@@ -31,12 +31,12 @@ class Korek(object):
     def __init__(self):
         self.enabled = False
         self.checked = False
+        self.korki = set()
     def onClick(self):
-        korki = set()
-        for row in arcpy.SearchCursor("lyr"):
-            korki.add(row)
-        tab_vert = a_star(stPt, endPt, korki)
-        print("Sciezka:", [i.id for i in tab_vert])
+        for row in arcpy.da.SearchCursor("lyr", ["id_jezdni"]):
+            self.korki.add(row[0])
+        tab_vert = a_star(stPt, endPt, self.korki)
+        # print("Sciezka:", [i.id for i in tab_vert])
         arcpy.Delete_management("lyr")
         wizualizacja(tab_vert, plik_z_krawedziami, plik_z_werteksami,"ominieteKorki")
 
@@ -60,10 +60,6 @@ class start(object):
     def __init__(self):
         self.enabled = False
         self.shape = "NONE"
-    def onClick(self):
-        print("klik")
-        arcpy.Delete_management(plik_z_werteksami[: plik_z_werteksami.rfind("\\")] + "start.shp")
-        arcpy.Delete_management(plik_z_werteksami[: plik_z_werteksami.rfind("\\")] + "cel.shp")
     def onMouseDownMap(self, x, y, button, shift):
         global start_x
         start_x = x
@@ -115,5 +111,5 @@ class wyznacztrase(object):
         global endPt
         endPt = graf[0][endPoint]
         tab_vert = a_star(graf[0][startPoint], graf[0][endPoint], set())
-        print("Sciezka:", [i.id for i in tab_vert])
-        wizualizacja(tab_vert, plik_z_krawedziami, plik_z_werteksami,"bezKorkow")
+
+        wizualizacja(tab_vert, plik_z_krawedziami, plik_z_werteksami,"trasaPierwotna")

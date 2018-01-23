@@ -31,7 +31,7 @@ def wczytaj_dane(infc,outfc):
         startx = startpt.X
         starty = startpt.Y
 
-        identStart = ("".join([str(startx)[-4:], str(starty)[-4:]]))
+        identStart = ("".join([str(startx)[-5:], str(starty)[-5:]]))
 
         # Pobranie ostatniego punktu danego obiektu
         endpt = feat.lastPoint
@@ -39,7 +39,7 @@ def wczytaj_dane(infc,outfc):
         endx = endpt.X
         endy = endpt.Y
 
-        identEnd = ("".join([str(endx)[-4:], str(endy)[-4:]]))
+        identEnd = ("".join([str(endx)[-5:], str(endy)[-5:]]))
 
         identJezdni = "".join([identStart, identEnd])
 

@@ -16,12 +16,12 @@ class Vertex:
         return "ID: {} X: {} Y: {}".format(self.id, self.x, self.y)
 
 class Edge:
-    def __init__(self, v_from, v_to, ident, V, direction):
+    def __init__(self, v_from, v_to, ident, V):
         self.vertex_from = v_from
         self.vertex_to = v_to
         self.id_jezdni = ident
         self.length = v_from.distance_to(v_to)
-        self.time = self.length/V  
+        self.time = self.length/V 
 
     def weight(self):
         return self.time

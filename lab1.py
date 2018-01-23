@@ -26,6 +26,7 @@ def wczytaj_dane(infc,outfc):
         feat = row[0]
 
         # Pobranie pierwszego punktu danego obiektu
+        print(feat)
         startpt = feat.firstPoint
 
         startx = startpt.X
